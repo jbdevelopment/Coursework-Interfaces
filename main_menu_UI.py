@@ -1,4 +1,6 @@
-from radio_button_widget_class import *
+from radio_button_dialog_class import *
+from insert_location_widget import *
+from insert_item_type_widget import *
 from printing import *
 from SQLController import *
 
@@ -94,11 +96,43 @@ class MainWindow(QMainWindow):
 		self.selected_table = self.select_table_dialog_box.selected_button()
 
 		if self.selected_table == 1:
-			print("Location")
-			#self.new_record = Location()
+			#print("Location")
+			self.insert_location_method()
 		elif self.selected_table == 2:
-			print("ItemType")
-			#self.new_record = ItemType()
+			#print("ItemType")
+			self.insert_item_type_method()
+
+	def insert_location_method(self):
+		self.insert_location_line_edit_widget = InsertLocationWidget()
+		self.cancel_button = QPushButton("Cancel")
+		self.confirm_button = QPushButton("Confirm")
+
+		self.location_buttons_layout = QHBoxLayout()
+		self.location_buttons_layout.addWidget(self.cancel_button)
+		self.location_buttons_layout.addWidget(self.confirm_button)
+
+		self.location_buttons_widget = QWidget()
+		self.location_buttons_widget.setLayout(self.location_buttons_layout)
+
+		self.new_location_layout = QVBoxLayout()
+		self.new_location_layout.addWidget(self.insert_location_line_edit_widget)
+		self.new_location_layout.addWidget(self.location_buttons_widget)
+
+		self.insert_location_widget = QWidget()
+		self.insert_location_widget.setLayout(self.new_location_layout)
+
+		self.stacked_layout.addWidget(self.insert_location_widget)
+		self.stacked_layout.setCurrentIndex(1)
+
+		location = self.insert_location_line_edit_widget.get_location()
+		print(location)
+		self.confirm_button.clicked.connect(self.back_to_main_menu_layout)
+
+	def back_to_main_menu_layout(self):
+		self.stacked_layout.setCurrentIndex(0)
+
+	def insert_item_type_method(self):
+		pass
 
 
 	def open_connection(self):
