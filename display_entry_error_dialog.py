@@ -6,10 +6,17 @@ import pdb
 
 class EntryErrorDialog(QDialog):
     """Error displayed when nothing is entered"""
+<<<<<<< HEAD
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Entry Error")
         self.login_error_label = QLabel("Error, please enter a location")
+=======
+    def __init__(self,field):
+        super().__init__()
+        self.setWindowTitle("Entry Error")
+        self.login_error_label = QLabel("Error, please enter {0}".format(field))
+>>>>>>> FETCH_HEAD
         self.close_button = QPushButton("Close")
 
         self.login_error_layout = QGridLayout()
@@ -25,5 +32,12 @@ class EntryErrorDialog(QDialog):
 
         self.setLayout(self.login_error_layout)
 
+<<<<<<< HEAD
         self.close_button.clicked.connect(self.close)
         #self.returnPressed.connect(self.close)
+=======
+        self.close_button.clicked.connect(self.close_window)
+
+    def close_window(self):
+        self.close()
+>>>>>>> FETCH_HEAD
