@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 from radio_button_dialog_class import *
 from insert_location_widget import *
 from insert_item_type_widget import *
-=======
 from display_entry_error_dialog import *
 from radio_button_dialog_class import *
->>>>>>> FETCH_HEAD
 from printing import *
 from SQLController import *
 
