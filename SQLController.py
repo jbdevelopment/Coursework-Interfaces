@@ -10,6 +10,7 @@ except:
 
 import sys
 import sqlite3
+import pdb
 
 class SQLConnection():
 
@@ -21,6 +22,7 @@ class SQLConnection():
         if self.db:
             self.close_database()
             
+        pdb.set_trace()
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.db.setDatabaseName(self.path )
         opened_ok = self.db.open()
@@ -37,7 +39,7 @@ class SQLConnection():
     
     def find_products_by_number(self,values):
         query = QSqlQuery()
-        query.prepare("SELECT * FROM Products WHERE ProductID = ?")
+        query.prepare("SELECT * FROM Item WHERE ItemID = ?")
         query.addBindValue(values[0])
         query.exec_()
         return query

@@ -58,6 +58,8 @@ class RadioButtonWidget(QDialog):
         self.setLayout(self.main_layout)
 
         self.select_button.clicked.connect(self.close)
+        self.cancel_button.clicked.connect(self.close)
+        self.cancel_button.setShortcut("Ctrl+W")
 
     #method to find out the selected button
     def selected_button(self):
