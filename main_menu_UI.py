@@ -528,12 +528,12 @@ class MainWindow(QMainWindow):
                         valid_length = True
                         valid = False
                         for char in self.mobile:
-                                regex = ('^[a-z],[A-z]*$')
-                                if regex not in self.mobile:
+                                no_letters = re.search('^[a-z],[A-z]*$', self.mobile)
+                                valid_mobile = re.search('^(07\d{8,12}|447\d{7,11})$', self.mobile)
+                                if not no_letters and valid_mobile:
                                         valid = True
                                 else:
                                         valid = False
-
                 else:
                         valid_length = False
                 if valid_length == True and valid == True:
@@ -548,8 +548,9 @@ class MainWindow(QMainWindow):
                         valid_length = True
                         valid = False
                         for char in self.landline:
-                                regex = ('^[a-z],[A-z]*$')
-                                if regex not in self.landline:
+                                no_letters = re.search('^[a-z],[A-z]*$',self.landline)
+                                valid_landline = re.search('^\s*\(?(020[78]?\)? ?[1-9][0-9]{2,3} ?[0-9]{4})$|^(0[1-8][0-9]{3}\)? ?[1-9][0-9]{2} ?[0-9]{3})\s*$', self.landline)
+                                if not no_letters:
                                         valid = True
                                 else:
                                         valid = False
