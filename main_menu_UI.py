@@ -186,19 +186,34 @@ class MainWindow(QMainWindow):
                         pass
                 elif self.selected_table == 2:
                         if hasattr(self, 'insert_location_widget'):
+                                self.get_location_name.clear()
                                 self.stacked_layout.setCurrentIndex(1)
                         else:
                                 self.insert_location_method()
                 elif self.selected_table == 3:
                         if hasattr(self, 'insert_item_type_widget'):
+                                self.get_item_type.clear()
                                 self.stacked_layout.setCurrentIndex(2)
                         else:
                                 self.insert_item_type_method()
                 elif self.selected_table == 4:
                         if hasattr(self, 'insert_customer_widget'):
+                                self.get_forename.clear()
+                                self.get_surname.clear()
+                                self.get_company.clear()
+                                self.get_address.clear()
+                                self.get_town.clear()
+                                self.get_post_code.clear()
+                                self.get_mobile.clear()
+                                self.get_landline.clear()
+                                self.get_email.clear()
                                 self.stacked_layout.setCurrentIndex(3)
                         else:
                                 self.insert_customer_method()
+                                while hasattr(self, 'error_dialog'):
+                                    pass
+                                else:
+                                    self.stacked_layout.setCurrentIndex(0)
                 elif self.selected_table == 5:
                         pass
                 elif self.selected_table == 6:
@@ -211,6 +226,7 @@ class MainWindow(QMainWindow):
         def insert_location_method(self):
                 self.location_label = QLabel("Location")
                 self.get_location_name = QLineEdit()
+                self.get_location_name.clear()
                 self.get_location_name.setPlaceholderText("Enter Location")
                 self.cancel_button = QPushButton("Cancel")
                 self.confirm_button = QPushButton("Confirm")
@@ -269,6 +285,7 @@ class MainWindow(QMainWindow):
         def insert_item_type_method(self):
                 self.item_type_label = QLabel("Item Type")
                 self.get_item_type = QLineEdit()
+                self.get_item_type.clear()
                 self.get_item_type.setPlaceholderText("Enter Item Type")
                 self.cancel_button = QPushButton("Cancel")
                 self.confirm_button = QPushButton("Confirm")
@@ -327,30 +344,39 @@ class MainWindow(QMainWindow):
         def insert_customer_method(self):
                 self.forename_label = QLabel("Forename")
                 self.get_forename = QLineEdit()
+                self.get_forename.clear()
 
                 self.surname_label = QLabel("Surname")
                 self.get_surname = QLineEdit()
+                self.get_surname.clear()
 
                 self.company_label = QLabel("Company")
                 self.get_company = QLineEdit()
+                self.get_company.clear()
 
                 self.address_label = QLabel("Address")
                 self.get_address = QLineEdit()
+                self.get_address.clear()
 
                 self.town_label = QLabel("Town")
                 self.get_town = QLineEdit()
+                self.get_town.clear()
 
                 self.post_code_label = QLabel("Post-Code")
                 self.get_post_code = QLineEdit()
+                self.get_post_code.clear()
 
-                self.mobile_label = QLabel("Mobile"
-                        )
+                self.mobile_label = QLabel("Mobile")
                 self.get_mobile = QLineEdit()
+                self.get_mobile.clear()
+
                 self.landline_label = QLabel("Landline")
                 self.get_landline = QLineEdit()
+                self.get_landline.clear()
 
                 self.email_label = QLabel("Email")
                 self.get_email = QLineEdit()
+                self.get_email.clear()
 
 
                 self.customer_layout = QVBoxLayout()
@@ -434,6 +460,7 @@ class MainWindow(QMainWindow):
                         elif valid == True and valid_length == True:
                                 print("Forename: {0}".format(self.forename))
 
+
                 self.surname = self.get_surname.text()
                 valid_length = False
                 if len(self.surname) == 0:
@@ -454,6 +481,7 @@ class MainWindow(QMainWindow):
                         elif valid == True and valid_length == True:
                                 print("Surname: {0}".format(self.surname))
 
+
                 self.company = self.get_company.text()
                 valid_length = False
                 if len(self.company) == 0:
@@ -473,6 +501,7 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Company: {0}".format(self.company))
+
 
                 self.street = self.get_address.text()
                 valid_length = False
@@ -506,16 +535,14 @@ class MainWindow(QMainWindow):
                         elif valid == True and valid_length == True:
                                 print("Town: {0}".format(self.town))
 
+
                 self.post_code = self.get_post_code.text()
                 valid_length = False
                 if len(self.post_code) == 8 or len(self.post_code) == 7:
                         valid_length = True
-                        valid = False
-                        if " " in self.post_code:
-                                valid = True
                 else:
                         valid_length = False
-                if valid_length == True and valid == True:
+                if valid_length == True:
                         print("Post-Code: {0}".format(self.post_code))
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Post-Code')
@@ -542,6 +569,7 @@ class MainWindow(QMainWindow):
                         self.error_dialog = EntryErrorDialog('a valid Mobile Number')
                         self.error_dialog.exec_()
 
+
                 self.landline = self.get_landline.text()
                 valid_length = False
                 if len(self.landline) == 11:
@@ -550,11 +578,10 @@ class MainWindow(QMainWindow):
                         for char in self.landline:
                                 no_letters = re.search('^[a-z],[A-z]*$',self.landline)
                                 valid_landline = re.search('^\s*\(?(020[78]?\)? ?[1-9][0-9]{2,3} ?[0-9]{4})$|^(0[1-8][0-9]{3}\)? ?[1-9][0-9]{2} ?[0-9]{3})\s*$', self.landline)
-                                if not no_letters:
+                                if not no_letters and valid_landline:
                                         valid = True
                                 else:
                                         valid = False
-
                 else:
                         valid_length = False
                 if valid_length == True and valid == True:
@@ -562,6 +589,7 @@ class MainWindow(QMainWindow):
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Landline Number')
                         self.error_dialog.exec_()
+
 
                 self.email = self.get_email.text()
                 valid_length = False
@@ -573,16 +601,13 @@ class MainWindow(QMainWindow):
                                 valid = True
                         else:
                                 valid = False
-
                 else:
                         valid_length = False
                 if valid_length == True and valid == True:
                         print("Email: {0}".format(self.email))
-                        self.stacked_layout.setCurrentIndex(0)
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Email Address')
                         self.error_dialog.exec_()
-
 
 
         def cancel(self):
