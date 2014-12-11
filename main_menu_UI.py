@@ -14,6 +14,7 @@ from PyQt4.QtGui import *
 
 import sys
 import pdb
+import re
 
 class MainWindow(QMainWindow):
         """Creates the main menu window where all
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
 
                 self.setCentralWidget(self.central_widget)
 
-                self.create_login_dialog()
+                #self.create_login_dialog()
                 self.create_main_menu_layout()
                 self.insert_location_method()
                 self.insert_item_type_method()
@@ -184,11 +185,20 @@ class MainWindow(QMainWindow):
                 if self.selected_table == 1:
                         pass
                 elif self.selected_table == 2:
-                        self.insert_location_method()
+                        if hasattr(self, 'insert_location_widget'):
+                                self.stacked_layout.setCurrentIndex(1)
+                        else:
+                                self.insert_location_method()
                 elif self.selected_table == 3:
-                        self.insert_item_type_method()
+                        if hasattr(self, 'insert_item_type_widget'):
+                                self.stacked_layout.setCurrentIndex(2)
+                        else:
+                                self.insert_item_type_method()
                 elif self.selected_table == 4:
-                        self.insert_customer_method()
+                        if hasattr(self, 'insert_customer_widget'):
+                                self.stacked_layout.setCurrentIndex(3)
+                        else:
+                                self.insert_customer_method()
                 elif self.selected_table == 5:
                         pass
                 elif self.selected_table == 6:
@@ -222,11 +232,12 @@ class MainWindow(QMainWindow):
                 self.new_location_layout.addWidget(self.enter_location_widget)
                 self.new_location_layout.addWidget(self.location_buttons_widget)
 
+                
                 self.insert_location_widget = QWidget()
                 self.insert_location_widget.setLayout(self.new_location_layout)
 
                 self.stacked_layout.addWidget(self.insert_location_widget)
-                self.stacked_layout.setCurrentIndex(2)
+                self.stacked_layout.setCurrentIndex(1)
 
                 self.get_location_name.returnPressed.connect(self.return_location)
                 self.confirm_button.clicked.connect(self.return_location)
@@ -283,7 +294,7 @@ class MainWindow(QMainWindow):
                 self.insert_item_type_widget.setLayout(self.new_item_type_layout)
 
                 self.stacked_layout.addWidget(self.insert_item_type_widget)
-                self.stacked_layout.setCurrentIndex(3)
+                self.stacked_layout.setCurrentIndex(2)
 
                 self.get_item_type.returnPressed.connect(self.return_item_type)
                 self.confirm_button.clicked.connect(self.return_item_type)
@@ -383,11 +394,11 @@ class MainWindow(QMainWindow):
 
                 self.customer_layout.addWidget(self.customer_buttons_widget)
 
-                self.customer_widget = QWidget()
-                self.customer_widget.setLayout(self.customer_layout)
+                self.insert_customer_widget = QWidget()
+                self.insert_customer_widget.setLayout(self.customer_layout)
 
-                self.stacked_layout.addWidget(self.customer_widget)
-                self.stacked_layout.setCurrentIndex(4)
+                self.stacked_layout.addWidget(self.insert_customer_widget)
+                self.stacked_layout.setCurrentIndex(3)
 
 
                 self.get_forename.returnPressed.connect(self.return_customer)
@@ -422,7 +433,6 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Forename: {0}".format(self.forename))
-                                self.stacked_layout.setCurrentIndex(0)
 
                 self.surname = self.get_surname.text()
                 valid_length = False
@@ -443,7 +453,6 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Surname: {0}".format(self.surname))
-                                self.stacked_layout.setCurrentIndex(0)
 
                 self.company = self.get_company.text()
                 valid_length = False
@@ -464,7 +473,6 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Company: {0}".format(self.company))
-                                self.stacked_layout.setCurrentIndex(0)
 
                 self.street = self.get_address.text()
                 valid_length = False
@@ -497,7 +505,6 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Town: {0}".format(self.town))
-                                self.stacked_layout.setCurrentIndex(0)
 
                 self.post_code = self.get_post_code.text()
                 valid_length = False
@@ -510,7 +517,6 @@ class MainWindow(QMainWindow):
                         valid_length = False
                 if valid_length == True and valid == True:
                         print("Post-Code: {0}".format(self.post_code))
-                        self.stacked_layout.setCurrentIndex(0)
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Post-Code')
                         self.error_dialog.exec_()
@@ -522,7 +528,8 @@ class MainWindow(QMainWindow):
                         valid_length = True
                         valid = False
                         for char in self.mobile:
-                                if ('a','b','c','d','e','f','g','h','i','j','k','l','m','o','n','p','q','r','s','t','u','v','w','x','y','z') not in self.mobile:
+                                regex = ('^[a-z],[A-z]*$')
+                                if regex not in self.mobile:
                                         valid = True
                                 else:
                                         valid = False
@@ -531,7 +538,6 @@ class MainWindow(QMainWindow):
                         valid_length = False
                 if valid_length == True and valid == True:
                         print("Mobile: {0}".format(self.mobile))
-                        self.stacked_layout.setCurrentIndex(0)
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Mobile Number')
                         self.error_dialog.exec_()
@@ -542,7 +548,8 @@ class MainWindow(QMainWindow):
                         valid_length = True
                         valid = False
                         for char in self.landline:
-                                if ('a','b','c','d','e','f','g','h','i','j','k','l','m','o','n','p','q','r','s','t','u','v','w','x','y','z') not in self.mobile:
+                                regex = ('^[a-z],[A-z]*$')
+                                if regex not in self.landline:
                                         valid = True
                                 else:
                                         valid = False
@@ -551,7 +558,6 @@ class MainWindow(QMainWindow):
                         valid_length = False
                 if valid_length == True and valid == True:
                         print("Landline: {0}".format(self.landline))
-                        self.stacked_layout.setCurrentIndex(0)
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Landline Number')
                         self.error_dialog.exec_()
@@ -561,11 +567,11 @@ class MainWindow(QMainWindow):
                 if len(self.email) > 0:
                         valid_length = True
                         valid = False
-                        for char in self.email:
-                                if ('@','.') not in self.mobile:
-                                        valid = True
-                                else:
-                                        valid = False
+                        valid_email = re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._%-]+.[a-z]{2,3}(\.[a-z]{2,3})$", self.email)
+                        if valid_email:
+                                valid = True
+                        else:
+                                valid = False
 
                 else:
                         valid_length = False
