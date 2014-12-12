@@ -5,6 +5,7 @@ from password_reset import *
 
 
 from display_entry_error_dialog import *
+from added_record_dialog import *
 from radio_button_dialog_class import *
 from printing import *
 from SQLController import *
@@ -209,11 +210,14 @@ class MainWindow(QMainWindow):
                                 self.get_email.clear()
                                 self.stacked_layout.setCurrentIndex(3)
                         else:
-                                self.insert_customer_method()
-                                while hasattr(self, 'error_dialog'):
-                                    pass
-                                else:
-                                    self.stacked_layout.setCurrentIndex(0)
+                                finished = False
+                                while not finished:
+                                    self.insert_customer_method()
+                                    if hasattr(self, 'error_dialog'):
+                                        finished = False
+                                    else:
+                                        finished = True
+                                        self.stacked_layout.setCurrentIndex(0)
                 elif self.selected_table == 5:
                         pass
                 elif self.selected_table == 6:
@@ -226,7 +230,6 @@ class MainWindow(QMainWindow):
         def insert_location_method(self):
                 self.location_label = QLabel("Location")
                 self.get_location_name = QLineEdit()
-                self.get_location_name.clear()
                 self.get_location_name.setPlaceholderText("Enter Location")
                 self.cancel_button = QPushButton("Cancel")
                 self.confirm_button = QPushButton("Confirm")
@@ -280,12 +283,13 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("location: {0}".format(self.location))
+                                self.added_record_dialog = DisplayCreatedRecordDialog("Location Record for {0}".format(self.location))
+                                self.added_record_dialog.exec_()
                                 self.stacked_layout.setCurrentIndex(0)
 
         def insert_item_type_method(self):
                 self.item_type_label = QLabel("Item Type")
                 self.get_item_type = QLineEdit()
-                self.get_item_type.clear()
                 self.get_item_type.setPlaceholderText("Enter Item Type")
                 self.cancel_button = QPushButton("Cancel")
                 self.confirm_button = QPushButton("Confirm")
@@ -339,44 +343,37 @@ class MainWindow(QMainWindow):
                                 self.error_dialog.exec_()
                         elif valid == True and valid_length == True:
                                 print("Item Type: {0}".format(self.item_type))
+                                self.added_record_dialog = DisplayCreatedRecordDialog("Item Type Record for {0}".format(self.item_type))
+                                self.added_record_dialog.exec_()
                                 self.stacked_layout.setCurrentIndex(0)
 
         def insert_customer_method(self):
                 self.forename_label = QLabel("Forename")
                 self.get_forename = QLineEdit()
-                self.get_forename.clear()
 
                 self.surname_label = QLabel("Surname")
                 self.get_surname = QLineEdit()
-                self.get_surname.clear()
 
                 self.company_label = QLabel("Company")
                 self.get_company = QLineEdit()
-                self.get_company.clear()
 
                 self.address_label = QLabel("Address")
                 self.get_address = QLineEdit()
-                self.get_address.clear()
 
                 self.town_label = QLabel("Town")
                 self.get_town = QLineEdit()
-                self.get_town.clear()
 
                 self.post_code_label = QLabel("Post-Code")
                 self.get_post_code = QLineEdit()
-                self.get_post_code.clear()
 
                 self.mobile_label = QLabel("Mobile")
                 self.get_mobile = QLineEdit()
-                self.get_mobile.clear()
 
                 self.landline_label = QLabel("Landline")
                 self.get_landline = QLineEdit()
-                self.get_landline.clear()
 
                 self.email_label = QLabel("Email")
                 self.get_email = QLineEdit()
-                self.get_email.clear()
 
 
                 self.customer_layout = QVBoxLayout()
@@ -605,9 +602,12 @@ class MainWindow(QMainWindow):
                         valid_length = False
                 if valid_length == True and valid == True:
                         print("Email: {0}".format(self.email))
+                        self.added_record_dialog = DisplayCreatedRecordDialog("Customer Record for {0} {1}".format(self.forename,self.surname))
+                        self.added_record_dialog.exec_()
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Email Address')
                         self.error_dialog.exec_()
+
 
 
         def cancel(self):
