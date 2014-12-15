@@ -1,7 +1,7 @@
 from incorrect_current_password_dialog import *
 from password_mismatch_dialog import *
 from password_changed_dialog import *
-from main_menu_UI import *
+from C3_Media_DBMS import *
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
     

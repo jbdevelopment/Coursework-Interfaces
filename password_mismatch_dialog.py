@@ -1,4 +1,4 @@
-from C3_media_database_application import *
+from C3_Media_DBMS import *
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *

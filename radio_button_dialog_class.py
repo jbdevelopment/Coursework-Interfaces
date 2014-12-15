@@ -1,6 +1,6 @@
 from PyQt4.QtGui import *
 
-from C3_media_database_application import *
+from C3_Media_DBMS import *
 import sys
 
 class RadioButtonWidget(QDialog):
@@ -9,7 +9,7 @@ class RadioButtonWidget(QDialog):
     #construcor
     def __init__(self,label,instruction,button_list):
         super().__init__()
-
+        self.selected = True
         #create widgets
         self.title_lable = QLabel(label)
         self.radio_group_box = QGroupBox(instruction)
@@ -73,6 +73,16 @@ class RadioButtonWidget(QDialog):
     #method to find out the selected button
     def selected_button(self):
         return self.radio_button_group.checkedId()
+
+    def closeEvent(self, event):
+        if self.select_button.clicked == True:
+            self.selected = True
+            print('True')
+            return self.selected
+        elif self.cancel_button.clicked == True:
+            print('False')
+            self.selected = False
+            return self.selected
 
 def main_menu_main():
     application = QApplication(sys.argv)
