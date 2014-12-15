@@ -1,4 +1,4 @@
-from main_menu_UI import *
+from C3_media_database_application import *
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
