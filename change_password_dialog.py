@@ -1,6 +1,7 @@
 from incorrect_current_password_dialog import *
 from password_mismatch_dialog import *
 from password_changed_dialog import *
+from main_menu_UI import *
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
     
@@ -47,7 +48,7 @@ class ChangePasswordDialog(QDialog):
 
         self.change_password_button.clicked.connect(self.close)
         self.cancel_button.clicked.connect(self.close)
-        self.confirm_new_password_lineEdit.returnPressed.connect(self.close)
+        self.confirm_new_password_lineEdit.returnPressed.connect(self.change_password)
 
         self.cancel_button.setAutoDefault(False)
         self.change_password_button.setAutoDefault(True)
@@ -64,8 +65,8 @@ class ChangePasswordDialog(QDialog):
             return self.current_password
         elif self.current_password_lineEdit.text() == self.current_password and self.new_password_lineEdit.text() == self.confirm_new_password_lineEdit.text():
             self.new_password = self.confirm_new_password_lineEdit.text()
-            password_changed_dialog = PasswordChangedDialog()
-            password_changed_dialog.exec_()
-            return self.new_password
-        else:
-            return self.current_password
+            if self.new_password == self.password:
+                    self.password = self.new_password
+                    update_password(self.password) 
+                    password_changed_dialog = PasswordChangedDialog()
+                    password_changed_dialog.exec_()

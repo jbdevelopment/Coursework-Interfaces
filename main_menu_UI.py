@@ -97,15 +97,15 @@ class MainWindow(QMainWindow):
 
         def change_password_method(self):
                 change_password_dialog = ChangePasswordDialog(self.password)
-                change_password_dialog.exec_()
-                self.new_password = change_password_dialog.change_password()
-                if self.new_password != self.password:
-                    self.password = self.new_password
-                    update_password(self.password)      
+                change_password_dialog.exec_()     
 
         def create_menubar_actions(self):
                 #file actions
                 self.open = QAction("Open", self)
+                self.new = QAction("New", self)
+                self.save = QAction("Save", self)
+                self.save_as = QAction("Save As...", self)
+                self.Print = QAction("Print", self)
                 self.close_window = QAction("Close Window...", self)
 
                 #edit actions
@@ -114,16 +114,28 @@ class MainWindow(QMainWindow):
                 self.paste = QAction("Paste...", self)
                 self.select_all = QAction("Select All", self)
 
+                #window actions
+                self.view_main_window = QAction("Main Menu", self)
+
                 #menubar
                 self.menubar = QMenuBar()
 
                 #add file menu and add actions to file menu
                 self.file_menu = self.menubar.addMenu("File")
                 self.file_menu.addAction(self.open)
+                self.file_menu.addAction(self.new)
+                self.file_menu.addAction(self.save)
+                self.file_menu.addAction(self.save_as)
+                self.file_menu.addAction(self.Print)
                 self.file_menu.addAction(self.close_window)
 
                 #file menu shortcuts
                 self.open.setShortcut('Ctrl+O')
+                self.new.setShortcut('Ctrl+N')
+                self.save.setShortcut('Ctrl+S')
+                self.save_as.setShortcut('Ctrl+Shift+S')
+                self.Print.setShortcut('Ctrl+P')
+                self.close_window.setShortcut('Ctrl+W')
 
                 #add edit menu and add actions to edit menu
                 self.edit_menu = self.menubar.addMenu("Edit")
@@ -135,14 +147,24 @@ class MainWindow(QMainWindow):
                 #edit menu shortcuts
                 self.cut.setShortcut('Ctrl+X')
                 self.copy.setShortcut('Ctrl+C')
-                self.paste.setShortcut('Ctrl+P')
+                self.paste.setShortcut('Ctrl+V')
                 self.select_all.setShortcut('Ctrl+A')
+                self.close_window.setShortcut('Ctrl+W')
+
+                #add window menu and actions to window menu
+                self.window_menu = self.menubar.addMenu("Window")
+                self.window_menu.addAction(self.view_main_window)
+
+                #window menu shortcuts
 
                 #create menubar
                 self.setMenuBar(self.menubar)
 
                 #connections
                 self.open.triggered.connect(self.open_connection)
+                self.close_window.triggered.connect(self.close)
+
+                self.view_main_window.triggered.connect(self.create_main_menu_layout)
 
         def create_main_menu_layout(self):
                 #components
@@ -208,12 +230,13 @@ class MainWindow(QMainWindow):
                                 self.get_mobile.clear()
                                 self.get_landline.clear()
                                 self.get_email.clear()
+                                self.get_forename.setFocus()
                                 self.stacked_layout.setCurrentIndex(3)
                         else:
                                 finished = False
                                 while not finished:
                                     self.insert_customer_method()
-                                    if hasattr(self, 'error_dialog'):
+                                    if hasattr(self, 'insert_customer_method.error_dialog'):
                                         finished = False
                                     else:
                                         finished = True
@@ -537,9 +560,15 @@ class MainWindow(QMainWindow):
                 valid_length = False
                 if len(self.post_code) == 8 or len(self.post_code) == 7:
                         valid_length = True
+                        valid = False
+                        length_regex_validation = re.match('^[a-zA-Z]{1,2}[0-9]{1,2}([A-Z]|[a-z]|[A-Z][a-z])?\s[0-9][a-zA-Z][a-zA-Z]$', self)
+                        if length_regex_validation:
+                            valid = True
+                        else:
+                            valid = False
                 else:
                         valid_length = False
-                if valid_length == True:
+                if valid_length == True and length_regex_validation == True:
                         print("Post-Code: {0}".format(self.post_code))
                 else:
                         self.error_dialog = EntryErrorDialog('a valid Post-Code')
@@ -551,13 +580,12 @@ class MainWindow(QMainWindow):
                 if len(self.mobile) == 11:
                         valid_length = True
                         valid = False
-                        for char in self.mobile:
-                                no_letters = re.search('^[a-z],[A-z]*$', self.mobile)
-                                valid_mobile = re.search('^(07\d{8,12}|447\d{7,11})$', self.mobile)
-                                if not no_letters and valid_mobile:
-                                        valid = True
-                                else:
-                                        valid = False
+                        no_letters = re.search('^[a-z],[A-z]*$', self.mobile)
+                        valid_mobile = re.search('^(07\d{8,12}|447\d{7,11})$', self.mobile)
+                        if not no_letters and valid_mobile:
+                                valid = True
+                        else:
+                                valid = False
                 else:
                         valid_length = False
                 if valid_length == True and valid == True:
@@ -608,6 +636,11 @@ class MainWindow(QMainWindow):
                         self.error_dialog = EntryErrorDialog('a valid Email Address')
                         self.error_dialog.exec_()
 
+                finished = False
+                while not finished:
+                    self.stacked_layout.setCurrentIndex(3)
+
+
 
 
         def cancel(self):
@@ -621,6 +654,7 @@ class MainWindow(QMainWindow):
 
 def main_menu_main():
         application = QApplication(sys.argv)
+        application.setQuitOnLastWindowClosed(False)
         window = MainWindow()
         window.show()
         window.raise_()
