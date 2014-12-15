@@ -1,4 +1,6 @@
 from PyQt4.QtGui import *
+
+from C3_media_database_application import *
 import sys
 
 class RadioButtonWidget(QDialog):
@@ -60,6 +62,13 @@ class RadioButtonWidget(QDialog):
         self.select_button.clicked.connect(self.close)
         self.cancel_button.clicked.connect(self.close)
         self.cancel_button.setShortcut("Ctrl+W")
+
+##    def get_button_clicked(self):
+##        if self.select_button.clicked:
+##            return True
+##        elif self.cancel_button.clicked:
+##            return False
+
 
     #method to find out the selected button
     def selected_button(self):
