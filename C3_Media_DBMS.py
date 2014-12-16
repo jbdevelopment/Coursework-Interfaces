@@ -209,7 +209,7 @@ class MainWindow(QMainWindow):
                 print("location: {0}".format(self.location))
                 self.added_record_dialog = DisplayCreatedRecordDialog("Location Record for {0}".format(self.location))
                 self.added_record_dialog.exec_()
-        self.stacked_layout.setCurrentIndex(0)
+                self.stacked_layout.setCurrentIndex(0)
 
     def create_new_item_type_layout(self):
         self.new_item_type_widget = NewItemTypeWidget()
@@ -243,7 +243,7 @@ class MainWindow(QMainWindow):
                 print("Item Type: {0}".format(self.item_type))
                 self.added_record_dialog = DisplayCreatedRecordDialog("Item Type Record for {0}".format(self.item_type))
                 self.added_record_dialog.exec_()
-        self.stacked_layout.setCurrentIndex(0)
+                self.stacked_layout.setCurrentIndex(0)
 
     def create_new_customer_layout(self):
         self.new_customer_widget = NewCustomerWidget()
@@ -282,6 +282,7 @@ class MainWindow(QMainWindow):
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
             elif valid == True and valid_length == True:
+                valid_forename = True
                 print("Forename: {0}".format(self.forename))
 
 
@@ -303,6 +304,7 @@ class MainWindow(QMainWindow):
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
             elif valid == True and valid_length == True:
+                valid_surname = True
                 print("Surname: {0}".format(self.surname))
 
 
@@ -324,6 +326,7 @@ class MainWindow(QMainWindow):
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
             elif valid == True and valid_length == True:
+                valid_company = True
                 print("Company: {0}".format(self.company))
 
 
@@ -331,8 +334,8 @@ class MainWindow(QMainWindow):
         valid_length = False
         if len(self.street) > 0:
             valid_length = True
+            valid_street = True
             print("Address: {0}".format(self.street))
-            self.stacked_layout.setCurrentIndex(0)
         else:
             valid_length = False
             self.error_dialog = EntryErrorDialog('a valid Address')
@@ -357,22 +360,20 @@ class MainWindow(QMainWindow):
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
             elif valid == True and valid_length == True:
+                valid_town = True
                 print("Town: {0}".format(self.town))
 
 
         self.post_code = self.new_customer_widget.get_post_code.text()
         valid_length = False
-        if len(self.post_code) == 8 or len(self.post_code) == 7:
-            valid_length = True
-            valid = False
-            length_regex_validation = re.match('^(GIR 0AA)|((([A-Z-[QVX]][0-9][0-9]?)|(([A-Z-[QVX]][A-Z-[IJZ]][0-9][0-9]?)|(([A-Z-[QVX]][0-9][A-HJKSTUW])|([A-Z-[QVX]][A-Z-[IJZ]][0-9][ABEHMNPRVWXY])))) [0-9][A-Z-[CIKMOV]]{2})$', self.post_code)
-            if length_regex_validation:
-                valid = True
-            else:
-                valid = False
+        length_regex_validation = re.match('[a-zA-Z]{1,2}[0-9]{1,2}([A-Z]|[a-z]|[A-Z][a-z])?\s[0-9][a-zA-Z][a-zA-Z]', self.post_code)
+        if length_regex_validation:
+            valid = True
         else:
-            valid_length = False
-        if valid_length == True and valid == True:
+            valid = False
+        
+        if valid == True:
+            valid_post_code = True
             print("Post-Code: {0}".format(self.post_code))
         else:
             self.error_dialog = EntryErrorDialog('a valid Post-Code')
@@ -393,6 +394,7 @@ class MainWindow(QMainWindow):
         else:
             valid_length = False
         if valid_length == True and valid == True:
+            valid_mobile = True
             print("Mobile: {0}".format(self.mobile))
         else:
             self.error_dialog = EntryErrorDialog('a valid Mobile Number')
@@ -406,14 +408,15 @@ class MainWindow(QMainWindow):
             valid = False
             for char in self.landline:
                 no_letters = re.search('^[a-z],[A-z]*$',self.landline)
-                valid_landline = re.search('^\s*\(?(020[78]?\)? ?[1-9][0-9]{2,3} ?[0-9]{4})$|^(0[1-8][0-9]{3}\)? ?[1-9][0-9]{2} ?[0-9]{3})\s*$', self.landline)
-                if not no_letters and valid_landline:
+                valid_landline_number = re.search('^\s*\(?(020[78]?\)? ?[1-9][0-9]{2,3} ?[0-9]{4})$|^(0[1-8][0-9]{3}\)? ?[1-9][0-9]{2} ?[0-9]{3})\s*$', self.landline)
+                if not no_letters and valid_landline_number:
                     valid = True
                 else:
                     valid = False
         else:
             valid_length = False
         if valid_length == True and valid == True:
+            valid_landline = True
             print("Landline: {0}".format(self.landline))
         else:
             self.error_dialog = EntryErrorDialog('a valid Landline Number')
@@ -425,20 +428,25 @@ class MainWindow(QMainWindow):
         if len(self.email) > 0:
             valid_length = True
             valid = False
-            valid_email = re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._%-]+.[a-z]{2,3}(\.[a-z]{2,3})$", self.email)
-            if valid_email:
+            valid_email_type = re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._%-]+.[a-z]{2,3}(\.[a-z]{2,3})$", self.email)
+            if valid_email_type:
                 valid = True
             else:
                 valid = False
         else:
             valid_length = False
         if valid_length == True and valid == True:
+            valid_email = True
             print("Email: {0}".format(self.email))
-            self.added_record_dialog = DisplayCreatedRecordDialog("Customer Record for {0} {1}".format(self.forename,self.surname))
-            self.added_record_dialog.exec_()
+            if valid_forename == True and valid_surname == True and valid_company == True and valid_street == True and valid_town == True and valid_post_code == True and valid_mobile == True and valid_landline == True and valid_email == True:
+                self.added_record_dialog = DisplayCreatedRecordDialog("Customer Record for {0} {1}".format(self.forename,self.surname))
+                self.added_record_dialog.exec_()
+                self.stacked_layout.setCurrentIndex(0)
         else:
             self.error_dialog = EntryErrorDialog('a valid Email Address')
             self.error_dialog.exec_()
+
+
         
     def login(self):
         name = self.login_interface_widget.password_entry.text()
