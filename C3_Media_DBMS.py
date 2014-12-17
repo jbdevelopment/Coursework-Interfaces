@@ -32,7 +32,6 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setGeometry(300, 300, 200, 200)
         self.setWindowTitle("C3 Media Database Management System")
 
         self.password = read_password()
@@ -50,23 +49,22 @@ class MainWindow(QMainWindow):
         self.open_connection()
         self.create_main_menu()
         self.create_new_item()
+        self.create_new_customer()
         self.create_new_loan()
         self.create_new_pat_test()
-        self.create_new_customer()
 
         self.stacked_layout.setCurrentIndex(0)
 
 
         QShortcut(QKeySequence("Ctrl+W"), self, self.close)
 
-        self.create_menubar_actions()
+        self.main_settings()
 
-    def create_menubar_actions(self):
+    def main_settings(self):
         #file actions
         self.open = QAction("Open", self)
         self.new = QAction("New", self)
         self.save = QAction("Save", self)
-        self.save_as = QAction("Save As...", self)
         self.Print = QAction("Print", self)
         self.close_window = QAction("Close Window...", self)
 
@@ -76,8 +74,29 @@ class MainWindow(QMainWindow):
         self.paste = QAction("Paste...", self)
         self.select_all = QAction("Select All", self)
 
-        #window actions
-        self.view_main_window = QAction("Main Menu", self)
+        #item actions
+        self.add_item = QAction('Add Item', self)
+        self.display_item = QAction('Display Item', self)
+        self.delete_item = QAction('Delete Item', self)
+
+        #customer actions
+        self.add_customer = QAction('Add Customer', self)
+        self.display_customer = QAction('Display Customer', self)
+        self.delete_customer = QAction('Delete Customer', self)
+
+        #loan actions
+        self.add_loan = QAction('Add Loan', self)
+        self.display_loan = QAction('Display Loan', self)
+        self.delete_loan = QAction('Delete Loan', self)
+
+        #pat_test actions
+        self.add_pat_test = QAction('Add Pat Test', self)
+        self.display_pat_test = QAction('Display Pat Test', self)
+        self.delete_pat_test = QAction('Delete Pat Test', self)
+
+        #help action
+        self.help = QAction('Help', self)
+        self.about = QAction('About', self)
 
         #menubar
         self.menubar = QMenuBar()
@@ -87,7 +106,6 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(self.open)
         self.file_menu.addAction(self.new)
         self.file_menu.addAction(self.save)
-        self.file_menu.addAction(self.save_as)
         self.file_menu.addAction(self.Print)
         self.file_menu.addAction(self.close_window)
 
@@ -95,7 +113,6 @@ class MainWindow(QMainWindow):
         self.open.setShortcut('Ctrl+O')
         self.new.setShortcut('Ctrl+N')
         self.save.setShortcut('Ctrl+S')
-        self.save_as.setShortcut('Ctrl+Shift+S')
         self.Print.setShortcut('Ctrl+P')
         self.close_window.setShortcut('Ctrl+W')
 
@@ -113,11 +130,34 @@ class MainWindow(QMainWindow):
         self.select_all.setShortcut('Ctrl+A')
         self.close_window.setShortcut('Ctrl+W')
 
-        #add window menu and actions to window menu
-        self.window_menu = self.menubar.addMenu("Window")
-        self.window_menu.addAction(self.view_main_window)
+        #item menu
+        self.item_menu = self.menubar.addMenu("Item")
+        self.item_menu.addAction(self.add_item)
+        self.item_menu.addAction(self.display_item)
+        self.item_menu.addAction(self.delete_item)
 
-        #window menu shortcuts
+        #customer menu
+        self.customer_menu = self.menubar.addMenu("Customer")
+        self.customer_menu.addAction(self.add_customer)
+        self.customer_menu.addAction(self.display_customer)
+        self.customer_menu.addAction(self.delete_customer)
+
+        #loan menu
+        self.loan_menu = self.menubar.addMenu("Loan")
+        self.loan_menu.addAction(self.add_loan)
+        self.loan_menu.addAction(self.display_loan)
+        self.loan_menu.addAction(self.delete_loan)
+
+        #pat test menu
+        self.pat_test_menu = self.menubar.addMenu("Loan")
+        self.pat_test_menu.addAction(self.add_pat_test)
+        self.pat_test_menu.addAction(self.display_pat_test)
+        self.pat_test_menu.addAction(self.delete_pat_test)
+
+        #help menu
+        self.help_menu = self.menubar.addMenu("Help")
+        self.help_menu.addAction(self.about)
+        self.help_menu.addAction(self.help)
 
         #create menubar
         self.setMenuBar(self.menubar)
@@ -126,8 +166,12 @@ class MainWindow(QMainWindow):
         self.open.triggered.connect(self.open_connection)
         self.close_window.triggered.connect(self.close)
 
-        self.view_main_window.triggered.connect(self.create_main_menu)
         self.new.triggered.connect(self.create_new_record_select_table_dialog)
+
+        self.add_item.triggered.connect(self.create_new_item)
+        self.add_customer.triggered.connect(self.create_new_customer)
+        self.add_loan.triggered.connect(self.create_new_loan)
+        self.add_pat_test.triggered.connect(self.create_new_pat_test)
 
     def create_new_record_select_table_dialog(self):
         self.select_table_dialog_box = RadioButtonWidget("Create New Record", "Please select a table", ("Item", "Customer", "Loan", "PAT-Test"))
@@ -140,7 +184,10 @@ class MainWindow(QMainWindow):
             else:
                 self.create_new_item()
         elif self.selected_table == 2:
-            pass
+            if hasattr(self, 'create_new_customer'):
+                self.stacked_layout.setCurrentIndex(2)
+            else:
+                self.create_new_customer()
         elif self.selected_tabel == 3:
             pass
         elif self.selected_tabel == 4:
@@ -173,6 +220,15 @@ class MainWindow(QMainWindow):
 
     def create_new_customer(self):
         self.new_customer_widget = NewCustomerWidget()
+        self.new_customer_widget.get_forename.clear()
+        self.new_customer_widget.get_surname.clear()
+        self.new_customer_widget.get_company.clear()
+        self.new_customer_widget.get_address.clear()
+        self.new_customer_widget.get_town.clear()
+        self.new_customer_widget.get_post_code.clear()
+        self.new_customer_widget.get_mobile.clear()
+        self.new_customer_widget.get_landline.clear()
+        self.new_customer_widget.get_email.clear()
         self.new_customer_widget.setLayout(self.new_customer_widget.new_customer_layout)
 
         self.new_customer_widget.confirm_button.clicked.connect(self.return_customer)
