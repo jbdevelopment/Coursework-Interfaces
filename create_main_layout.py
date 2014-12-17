@@ -24,9 +24,9 @@ class MainMenuLayout(QWidget):
         self.main_menu_layout = QGridLayout()
 
         #add components to layout
-        self.main_menu_layout.addWidget(self.new_record_button,0,0)
-        self.main_menu_layout.addWidget(self.display_records_button,0,1)
-        self.main_menu_layout.addWidget(self.edit_record_button,1,0)
-        self.main_menu_layout.addWidget(self.delete_record_button,1,1)
-        self.main_menu_layout.addWidget(self.logout_button,3,0)
-        self.main_menu_layout.addWidget(self.change_password_button,3,1)
+        #self.main_menu_layout.addWidget(self.new_record_button,0,0)
+        #self.main_menu_layout.addWidget(self.display_records_button,0,1)
+        #self.main_menu_layout.addWidget(self.edit_record_button,1,0)
+        #self.main_menu_layout.addWidget(self.delete_record_button,1,1)
+        #self.main_menu_layout.addWidget(self.logout_button,3,0)
+        #self.main_menu_layout.addWidget(self.change_password_button,3,1)

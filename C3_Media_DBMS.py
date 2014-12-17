@@ -5,8 +5,7 @@ from password_reset import *
 
 
 from create_main_layout import *
-from create_new_item_type_layout import *
-from create_new_location_layout import *
+from create_new_item_layout import *
 from create_new_customer_layout import *
 
 from display_entry_error_dialog import *
@@ -14,6 +13,11 @@ from added_record_dialog import *
 from radio_button_dialog_class import *
 from printing import *
 from SQLController import *
+
+from insert_records_menu import *
+from update_records_menu import *
+from display_records_menu import *
+from delete_records_menu import *
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -28,7 +32,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setGeometry(300, 300, 500, 500)
+        self.setGeometry(300, 300, 200, 200)
         self.setWindowTitle("C3 Media Database Management System")
 
         self.password = read_password()
@@ -43,10 +47,12 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.central_widget)
 
-        self.create_main_menu_layout()
-        self.create_new_location_layout()
-        self.create_new_item_type_layout()
-        self.create_new_customer_layout()
+        self.open_connection()
+        self.create_main_menu()
+        self.create_new_item()
+        self.create_new_loan()
+        self.create_new_pat_test()
+        self.create_new_customer()
 
         self.stacked_layout.setCurrentIndex(0)
 
@@ -120,52 +126,27 @@ class MainWindow(QMainWindow):
         self.open.triggered.connect(self.open_connection)
         self.close_window.triggered.connect(self.close)
 
-        self.view_main_window.triggered.connect(self.create_main_menu_layout)
+        self.view_main_window.triggered.connect(self.create_main_menu)
+        self.new.triggered.connect(self.create_new_record_select_table_dialog)
 
     def create_new_record_select_table_dialog(self):
-        self.select_table_dialog_box = RadioButtonWidget("Create New Record", "Please select a table", ("Item","Location","Item-Type", "Customer", "Loan","Loan-Item", "PAT-Test","Item-Test"))
+        self.select_table_dialog_box = RadioButtonWidget("Create New Record", "Please select a table", ("Item", "Customer", "Loan", "PAT-Test"))
         self.select_table_dialog_box.exec_()
         self.selected_table = self.select_table_dialog_box.selected_button()
 
         if self.selected_table == 1:
-            pass
-        elif self.selected_table == 2:
-            if hasattr(self, 'create_new_location_layout'):
-                self.new_location_widget.get_location_name.clear()
+            if hasattr(self, 'create_new_item'):
                 self.stacked_layout.setCurrentIndex(1)
             else:
-                self.create_new_location_layout()
-        elif self.selected_table == 3:
-            if hasattr(self, 'create_new_item_type_layout'):
-                self.new_item_type_widget.get_item_type.clear()
-                self.stacked_layout.setCurrentIndex(2)
-            else:
-                self.create_new_item_type_layout()
-        elif self.selected_table == 4:
-            if hasattr(self, 'create_new_customer_layout'):
-                self.new_customer_widget.get_forename.clear() 
-                self.new_customer_widget.get_surname.clear()
-                self.new_customer_widget.get_company.clear()
-                self.new_customer_widget.get_address.clear()
-                self.new_customer_widget.get_town.clear()
-                self.new_customer_widget.get_post_code.clear()
-                self.new_customer_widget.get_mobile.clear()
-                self.new_customer_widget.get_landline.clear()
-                self.new_customer_widget.get_email.clear()
-                self.new_customer_widget.get_forename.setFocus()
-                self.stacked_layout.setCurrentIndex(3)
-            else:
-                self.create_new_customer_layout()
-        elif self.selected_table == 5:
-             pass
-        elif self.selected_table == 6:
-             pass
-        elif self.selected_table == 7:
-             pass
-        elif self.selected_table == 8:
-             pass
+                self.create_new_item()
+        elif self.selected_table == 2:
+            pass
+        elif self.selected_tabel == 3:
+            pass
+        elif self.selected_tabel == 4:
+            pass
 
-    def create_main_menu_layout(self):
+    def create_main_menu(self):
         self.main_menu_widget = MainMenuLayout()
         self.main_menu_widget.setLayout(self.main_menu_widget.main_menu_layout)
 
@@ -176,88 +157,24 @@ class MainWindow(QMainWindow):
 
         self.stacked_layout.addWidget(self.main_menu_widget)
 
-    def create_new_location_layout(self):
-        self.new_location_widget = NewLocationWidget()
-        self.new_location_widget.setLayout(self.new_location_widget.new_location_layout)
+    def create_new_item(self):
+        self.new_item = NewItemWidget()
+        self.new_item.setLayout(self.new_item.item_layout)
 
-        #connections
-        self.new_location_widget.get_location_name.returnPressed.connect(self.return_location)
-        self.new_location_widget.confirm_button.clicked.connect(self.return_location)
-        self.new_location_widget.cancel_button.clicked.connect(self.cancel)
+        self.new_item.select_button.clicked.connect(self.close)
 
-        self.stacked_layout.addWidget(self.new_location_widget)
+        self.stacked_layout.addWidget(self.new_item)
 
-    def return_location(self):
-        self.location = self.new_location_widget.get_location_name.text()
-        valid_length = False
-        if len(self.location) == 0:
-            valid_length = False
-            self.error_dialog = EntryErrorDialog('a Location')
-            self.error_dialog.exec_()
-        elif len(self.location) > 0 :
-            valid_length = True
-            valid = False
-            for char in self.location:
-                if char.isdigit() == True:
-                    valid = False
-                else:
-                    valid = True
-            if valid == False:
-                self.error_dialog = EntryErrorDialog('only letters')
-                self.error_dialog.exec_()
-            elif valid == True and valid_length == True:
-                print("location: {0}".format(self.location))
-                self.added_record_dialog = DisplayCreatedRecordDialog("Location Record for {0}".format(self.location))
-                self.added_record_dialog.exec_()
-                self.stacked_layout.setCurrentIndex(0)
+    def create_new_loan(self):
+        pass
 
-    def create_new_item_type_layout(self):
-        self.new_item_type_widget = NewItemTypeWidget()
-        self.new_item_type_widget.setLayout(self.new_item_type_widget.new_item_type_layout)
+    def create_new_pat_test(self):
+        pass
 
-        self.new_item_type_widget.get_item_type.returnPressed.connect(self.return_item_type)
-        self.new_item_type_widget.confirm_button.clicked.connect(self.return_item_type)
-        self.new_item_type_widget.cancel_button.clicked.connect(self.cancel)
-
-        self.stacked_layout.addWidget(self.new_item_type_widget)
-
-    def return_item_type(self):
-        self.item_type = self.new_item_type_widget.get_item_type.text()
-        valid_length = False
-        if len(self.item_type) == 0:
-            valid_length = False
-            self.error_dialog = EntryErrorDialog('an Item Type')
-            self.error_dialog.exec_()
-        elif len(self.item_type) > 0 :
-            valid_length = True
-            valid = False
-            for char in self.item_type:
-                if char.isdigit() == True:
-                    valid = False
-                else:
-                    valid = True
-            if valid == False:
-                self.error_dialog = EntryErrorDialog('only letters')
-                self.error_dialog.exec_()
-            elif valid == True and valid_length == True:
-                print("Item Type: {0}".format(self.item_type))
-                self.added_record_dialog = DisplayCreatedRecordDialog("Item Type Record for {0}".format(self.item_type))
-                self.added_record_dialog.exec_()
-                self.stacked_layout.setCurrentIndex(0)
-
-    def create_new_customer_layout(self):
+    def create_new_customer(self):
         self.new_customer_widget = NewCustomerWidget()
         self.new_customer_widget.setLayout(self.new_customer_widget.new_customer_layout)
 
-        self.new_customer_widget.get_forename.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_surname.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_company.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_address.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_town.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_post_code.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_mobile.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_landline.returnPressed.connect(self.return_customer)
-        self.new_customer_widget.get_email.returnPressed.connect(self.return_customer)
         self.new_customer_widget.confirm_button.clicked.connect(self.return_customer)
         self.new_customer_widget.cancel_button.clicked.connect(self.cancel)
 
@@ -281,6 +198,7 @@ class MainWindow(QMainWindow):
             if valid == False:
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
+                valid_forename = False
             elif valid == True and valid_length == True:
                 valid_forename = True
                 print("Forename: {0}".format(self.forename))
@@ -303,6 +221,7 @@ class MainWindow(QMainWindow):
             if valid == False:
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
+                valid_surname = False
             elif valid == True and valid_length == True:
                 valid_surname = True
                 print("Surname: {0}".format(self.surname))
@@ -325,6 +244,7 @@ class MainWindow(QMainWindow):
             if valid == False:
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
+                valid_company = False
             elif valid == True and valid_length == True:
                 valid_company = True
                 print("Company: {0}".format(self.company))
@@ -359,6 +279,7 @@ class MainWindow(QMainWindow):
             if valid == False:
                 self.error_dialog = EntryErrorDialog('only letters')
                 self.error_dialog.exec_()
+                valid_town = False
             elif valid == True and valid_length == True:
                 valid_town = True
                 print("Town: {0}".format(self.town))
@@ -378,6 +299,7 @@ class MainWindow(QMainWindow):
         else:
             self.error_dialog = EntryErrorDialog('a valid Post-Code')
             self.error_dialog.exec_()
+            valid_post_code = False
 
 
         self.mobile = self.new_customer_widget.get_mobile.text()
@@ -399,6 +321,7 @@ class MainWindow(QMainWindow):
         else:
             self.error_dialog = EntryErrorDialog('a valid Mobile Number')
             self.error_dialog.exec_()
+            valid_mobile = False
 
 
         self.landline = self.new_customer_widget.get_landline.text()
@@ -421,6 +344,7 @@ class MainWindow(QMainWindow):
         else:
             self.error_dialog = EntryErrorDialog('a valid Landline Number')
             self.error_dialog.exec_()
+            valid_landline = False
 
 
         self.email = self.new_customer_widget.get_email.text()
@@ -445,6 +369,7 @@ class MainWindow(QMainWindow):
         else:
             self.error_dialog = EntryErrorDialog('a valid Email Address')
             self.error_dialog.exec_()
+            valid_email = False
 
 
         
