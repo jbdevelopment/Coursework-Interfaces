@@ -7,6 +7,8 @@ from password_reset import *
 from create_main_layout import *
 from create_new_item_layout import *
 from create_new_customer_layout import *
+#from create_loan_layout import *
+from create_pat_test_layout import *
 
 from display_entry_error_dialog import *
 from added_record_dialog import *
@@ -33,7 +35,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("C3 Media Database Management System")
-
+        self.resize(800,500)
         self.password = read_password()
 
         self.printer = QPrinter()
@@ -46,6 +48,12 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.central_widget)
 
+        self.main_settings()
+
+        #self.disable_settings()
+        #self.create_login()
+        #self.enable_setting()
+        
         self.open_connection()
         self.create_main_menu()
         self.create_new_item()
@@ -57,8 +65,6 @@ class MainWindow(QMainWindow):
 
 
         QShortcut(QKeySequence("Ctrl+W"), self, self.close)
-
-        self.main_settings()
 
     def main_settings(self):
         #file actions
@@ -149,7 +155,7 @@ class MainWindow(QMainWindow):
         self.loan_menu.addAction(self.delete_loan)
 
         #pat test menu
-        self.pat_test_menu = self.menubar.addMenu("Loan")
+        self.pat_test_menu = self.menubar.addMenu("Pat Test")
         self.pat_test_menu.addAction(self.add_pat_test)
         self.pat_test_menu.addAction(self.display_pat_test)
         self.pat_test_menu.addAction(self.delete_pat_test)
@@ -188,10 +194,23 @@ class MainWindow(QMainWindow):
                 self.stacked_layout.setCurrentIndex(2)
             else:
                 self.create_new_customer()
-        elif self.selected_tabel == 3:
+        elif self.selected_table == 3:
             pass
-        elif self.selected_tabel == 4:
-            pass
+        elif self.selected_table == 4:
+            if hasattr(self, 'create_new_pat_test'):
+                self.stacked_layout.setCurrentIndex(3)
+            else:
+                self.create_new_pat_test()
+
+    def create_login(self):
+        self.login_widget = LoginWidget()
+        self.login_widget.setLayout(self.login_widget.login_layout)
+
+        self.login_widget.login_button.clicked.connect(self.login)
+        self.login_widget.quit_button.clicked.connect(self.close)
+        self.login_widget.password_entry.returnPressed.connect(self.login)
+
+        self.stacked_layout.addWidget(self.login_widget)
 
     def create_main_menu(self):
         self.main_menu_widget = MainMenuLayout()
@@ -205,18 +224,45 @@ class MainWindow(QMainWindow):
         self.stacked_layout.addWidget(self.main_menu_widget)
 
     def create_new_item(self):
-        self.new_item = NewItemWidget()
-        self.new_item.setLayout(self.new_item.item_layout)
+        self.new_item_widget = NewItemWidget()
+        self.new_item_widget.setLayout(self.new_item_widget.item_layout)
 
-        self.new_item.select_button.clicked.connect(self.close)
+        self.new_item_widget.confirm_button.clicked.connect(self.close)
+        self.new_item_widget.cancel_button.clicked.connect(self.cancel)
 
-        self.stacked_layout.addWidget(self.new_item)
+        self.stacked_layout.addWidget(self.new_item_widget)
 
     def create_new_loan(self):
         pass
 
     def create_new_pat_test(self):
-        pass
+        self.pat_test_widget = NewPatTestWidget()
+        self.pat_test_widget.setLayout(self.pat_test_widget.pat_test_layout)
+
+        self.pat_test_layout = QHBoxLayout()
+        self.blank_widget = QWidget()
+
+        self.pat_test_layout.addWidget(self.blank_widget)
+        self.pat_test_layout.addWidget(self.pat_test_widget)
+
+        self.new_pat_test_widget = QWidget()
+        self.new_pat_test_widget.setLayout(self.pat_test_layout)
+
+
+        self.pat_test_widget.enter_button.clicked.connect(self.return_pat_test)
+        self.pat_test_widget.cancel_button.clicked.connect(self.cancel)
+
+        self.stacked_layout.addWidget(self.new_pat_test_widget)
+
+    def return_pat_test(self):
+        self.date = self.pat_test_widget.date_widget.cal.selectedDate()
+        year,month,day = QDate.getDate(self.date)
+        year = int(year)
+        month = int(month)
+        day = int(day)
+        self.date = ("{0}/{1}/{2}".format(day,month,year))
+        print(self.date)
+        self.stacked_layout.setCurrentIndex(0)
 
     def create_new_customer(self):
         self.new_customer_widget = NewCustomerWidget()
@@ -430,7 +476,7 @@ class MainWindow(QMainWindow):
 
         
     def login(self):
-        name = self.login_interface_widget.password_entry.text()
+        name = self.login_widget.password_entry.text()
         if name == self.password:
              allow_access = True
              self.stacked_layout.setCurrentIndex(1)
@@ -441,7 +487,7 @@ class MainWindow(QMainWindow):
 
     def logout(self):
         self.stacked_layout.setCurrentIndex(0)
-        self.password_entry.clear()
+        self.login_widget.password_entry.clear()
         self.password = read_password()
 
     def change_password_method(self):

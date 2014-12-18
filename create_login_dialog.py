@@ -15,14 +15,23 @@ class LoginWidget(QWidget):
         self.password_entry = QLineEdit()
         self.password_entry.setEchoMode(QLineEdit.Password)
 
+        self.login_button = QPushButton("Login")
+        self.quit_button = QPushButton("Quit")
+        self.buttons_widget = QWidget()
+
         #create layout
         self.login_layout = QVBoxLayout()
         self.login_buttons_layout = QHBoxLayout()
+
+        self.login_buttons_layout.addWidget(self.quit_button)
+        self.login_buttons_layout.addWidget(self.login_button)
+
+        self.buttons_widget.setLayout(self.login_buttons_layout)
         #add widgets to layout
         self.login_layout.addWidget(self.login_label)
         self.login_layout.addWidget(self.password_entry)
+        self.login_layout.addWidget(self.buttons_widget)
         
-        self.setLayout(self.login_layout)
 
 def login_dialog_main():
     application = QApplication(sys.argv)

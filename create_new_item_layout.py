@@ -84,14 +84,14 @@ class NewItemWidget(QWidget):
         self.item_layout.addWidget(self.location_drop_down)
 
         self.cancel_button = QPushButton("Cancel")
-        self.select_button = QPushButton("Enter")
+        self.confirm_button = QPushButton("Enter")
         self.cancel_button.setAutoDefault(False)
-        self.select_button.setAutoDefault(True)
-        self.select_button.setShortcut("Enter")
+        self.confirm_button.setAutoDefault(True)
+        self.confirm_button.setShortcut("Enter")
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.cancel_button)
-        self.buttons_layout.addWidget(self.select_button)
+        self.buttons_layout.addWidget(self.confirm_button)
 
         self.buttons_widget = QWidget()
         self.buttons_widget.setLayout(self.buttons_layout)

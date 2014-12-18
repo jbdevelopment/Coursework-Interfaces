@@ -11,6 +11,7 @@ class NewCustomerWidget(QWidget):
     """docstring for NewCustomerWidgetQWidget"""
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("New Customer")
         
         self.forename_label = QLabel("Forename")
         self.get_forename = QLineEdit()
